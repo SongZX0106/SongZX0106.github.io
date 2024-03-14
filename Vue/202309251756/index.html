@@ -1,0 +1,303 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>自定义插件之全局Loading | SZX的开发笔记</title><meta name="keywords" content="Vue"><meta name="author" content="SZX"><meta name="copyright" content="SZX"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="自定义插件之全局LoadingElementPlus的默认全局Loading如果完整引入了 Element Plus，那么 app.config.globalProperties 上会有一个全局方法$loading，同样会返回一个 Loading 实例。    名称 说明 类型 默认    target Loading 需要覆盖的 DOM 节点。 可传入一个 DOM 对象或字符串； 若传入字符串，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义插件之全局Loading">
+<meta property="og:url" content="https://songzx0106.github.io/Vue/202309251756/index.html">
+<meta property="og:site_name" content="SZX的开发笔记">
+<meta property="og:description" content="自定义插件之全局LoadingElementPlus的默认全局Loading如果完整引入了 Element Plus，那么 app.config.globalProperties 上会有一个全局方法$loading，同样会返回一个 Loading 实例。    名称 说明 类型 默认    target Loading 需要覆盖的 DOM 节点。 可传入一个 DOM 对象或字符串； 若传入字符串，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://songzx0106.github.io/images/ys16.png">
+<meta property="article:published_time" content="2023-09-25T09:57:25.000Z">
+<meta property="article:modified_time" content="2023-09-25T09:57:46.235Z">
+<meta property="article:author" content="SZX">
+<meta property="article:tag" content="Vue">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://songzx0106.github.io/images/ys16.png"><link rel="shortcut icon" href="/images/favicon.png"><link rel="canonical" href="https://songzx0106.github.io/Vue/202309251756/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":5000,"languages":{"author":"作者: SZX","link":"链接: ","source":"来源: SZX的开发笔记","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/js/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://fastly.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://fastly.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://fastly.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/js/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-09-25 17:57:46'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const fontSizeVal = saveToLocal.get('global-font-size')
+    if (fontSizeVal !== undefined) {
+      document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+    }
+    })(window)</script><link rel="stylesheet" href="//at.alicdn.com/t/font_2467717_jlvw8717b8.css"><meta name="generator" content="Hexo 5.4.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" data-lazy-src="/images/favicon.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">139</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">24</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">34</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/images/ys16.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">SZX的开发笔记</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">自定义插件之全局Loading</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-09-25T09:57:25.000Z" title="发表于 2023-09-25 17:57:25">2023-09-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-09-25T09:57:46.235Z" title="更新于 2023-09-25 17:57:46">2023-09-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/vite/">vite</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="自定义插件之全局Loading"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="自定义插件之全局Loading"><a href="#自定义插件之全局Loading" class="headerlink" title="自定义插件之全局Loading"></a>自定义插件之全局Loading</h2><h3 id="ElementPlus的默认全局Loading"><a href="#ElementPlus的默认全局Loading" class="headerlink" title="ElementPlus的默认全局Loading"></a>ElementPlus的默认全局Loading</h3><p>如果完整引入了 Element Plus，那么 <code>app.config.globalProperties</code> 上会有一个全局方法<code>$loading</code>，同样会返回一个 Loading 实例。</p>
+<table>
+<thead>
+<tr>
+<th align="left">名称</th>
+<th align="left">说明</th>
+<th align="left">类型</th>
+<th align="left">默认</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">target</td>
+<td align="left">Loading 需要覆盖的 DOM 节点。 可传入一个 DOM 对象或字符串； 若传入字符串，则会将其作为参数传入 <code>document.querySelector</code>以获取到对应 DOM 节点</td>
+<td align="left"><code>string</code> &#x2F; <code>HTMLElement</code></td>
+<td align="left">document.body</td>
+</tr>
+<tr>
+<td align="left">body</td>
+<td align="left">同 <code>v-loading</code> 指令中的 <code>body</code> 修饰符</td>
+<td align="left"><code>boolean</code></td>
+<td align="left">false</td>
+</tr>
+<tr>
+<td align="left">fullscreen</td>
+<td align="left">同 <code>v-loading</code> 指令中的 <code>fullscreen</code> 修饰符</td>
+<td align="left"><code>boolean</code></td>
+<td align="left">true</td>
+</tr>
+<tr>
+<td align="left">lock</td>
+<td align="left">同 <code>v-loading</code> 指令中的 <code>lock</code> 修饰符</td>
+<td align="left"><code>boolean</code></td>
+<td align="left">false</td>
+</tr>
+<tr>
+<td align="left">text</td>
+<td align="left">显示在加载图标下方的加载文案</td>
+<td align="left"><code>string</code></td>
+<td align="left">—</td>
+</tr>
+<tr>
+<td align="left">spinner</td>
+<td align="left">自定义加载图标类名</td>
+<td align="left"><code>string</code></td>
+<td align="left">—</td>
+</tr>
+<tr>
+<td align="left">background</td>
+<td align="left">遮罩背景色</td>
+<td align="left"><code>string</code></td>
+<td align="left">—</td>
+</tr>
+<tr>
+<td align="left">customClass</td>
+<td align="left">Loading 的自定义类名</td>
+<td align="left"><code>string</code></td>
+<td align="left">—</td>
+</tr>
+</tbody></table>
+<h4 id="指令的方式使用"><a href="#指令的方式使用" class="headerlink" title="指令的方式使用"></a>指令的方式使用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class&#x3D;&quot;box&quot; v-loading&#x3D;&quot;isLoading&quot;&gt;</span><br><span class="line">    content</span><br><span class="line">  &lt;&#x2F;div&gt;</span><br><span class="line">  &lt;el-button type&#x3D;&quot;primary&quot; @click&#x3D;&quot;showDivLoading&quot;&gt;显示loading&lt;&#x2F;el-button&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang&#x3D;&quot;ts&quot;&gt;</span><br><span class="line">&#x2F;&#x2F; 显示局部loading</span><br><span class="line">let isLoading &#x3D; ref(false)</span><br><span class="line"></span><br><span class="line">const showDivLoading &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  isLoading.value &#x3D; !isLoading.value</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style scoped&gt;</span><br><span class="line">.box &#123;</span><br><span class="line">  width: 200px;</span><br><span class="line">  height: 200px;</span><br><span class="line">  border: 1px solid;</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;style&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="函数式调用"><a href="#函数式调用" class="headerlink" title="函数式调用"></a>函数式调用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;el-button type&#x3D;&quot;primary&quot; @click&#x3D;&quot;showLoading&quot;&gt;showLoading&lt;&#x2F;el-button&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang&#x3D;&quot;ts&quot;&gt;</span><br><span class="line">import &#123;getCurrentInstance&#125; from &#39;vue&#39;</span><br><span class="line">&#x2F;&#x2F; 获取当前实例</span><br><span class="line">const &#123;proxy&#125; &#x3D; getCurrentInstance()</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 显示全局loading</span><br><span class="line">const showLoading &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  const loading &#x3D; proxy.$loading()</span><br><span class="line">  setTimeout(() &#x3D;&gt; &#123;</span><br><span class="line">    loading.close()</span><br><span class="line">  &#125;, 2000)</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义全局Loading"><a href="#自定义全局Loading" class="headerlink" title="自定义全局Loading"></a>自定义全局Loading</h3><p>我们自己动手来实现一个和ElementPlus的Loading，同时支持函数调用和指令调用</p>
+<h4 id="添加MyLoading-vue"><a href="#添加MyLoading-vue" class="headerlink" title="添加MyLoading.vue"></a>添加MyLoading.vue</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;transition enter-active-class&#x3D;&quot;animate__animated animate__fadeIn&quot;</span><br><span class="line">              leave-active-class&#x3D;&quot;animate__animated animate__fadeOut&quot;&gt;</span><br><span class="line">    &lt;div class&#x3D;&quot;root-box&quot; v-if&#x3D;&quot;show&quot;&gt;</span><br><span class="line">      &lt;div class&#x3D;&quot;wrap&quot;&gt;</span><br><span class="line">        &lt;img src&#x3D;&quot;..&#x2F;assets&#x2F;images&#x2F;loading.gif&quot;&#x2F;&gt;</span><br><span class="line">      &lt;&#x2F;div&gt;</span><br><span class="line">    &lt;&#x2F;div&gt;</span><br><span class="line">  &lt;&#x2F;transition&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup&gt;</span><br><span class="line">let show &#x3D; ref(false)</span><br><span class="line"></span><br><span class="line">const showLoading &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  show.value &#x3D; true</span><br><span class="line">&#125;</span><br><span class="line">const hideLoading &#x3D; (callback) &#x3D;&gt; &#123;</span><br><span class="line">  show.value &#x3D; false</span><br><span class="line">  callback &amp;&amp; setTimeout(() &#x3D;&gt; callback(), 500)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">defineExpose(&#123;</span><br><span class="line">  show,</span><br><span class="line">  showLoading,</span><br><span class="line">  hideLoading</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style scoped lang&#x3D;&quot;scss&quot;&gt;</span><br><span class="line">.animate__animated.animate__fadeIn &#123;</span><br><span class="line">  --animate-duration: 0.5s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.animate__animated.animate__fadeOut &#123;</span><br><span class="line">  --animate-duration: 0.5s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.root-box &#123;</span><br><span class="line">  position: absolute;</span><br><span class="line">  left: 0;</span><br><span class="line">  top: 0;</span><br><span class="line">  bottom: 0;</span><br><span class="line">  right: 0;</span><br><span class="line">  margin: 0;</span><br><span class="line">  background-color: rgba(255, 255, 255, 0.9);</span><br><span class="line">  z-index: 2000;</span><br><span class="line">  display: flex;</span><br><span class="line">  justify-content: center;</span><br><span class="line">  align-items: center;</span><br><span class="line"></span><br><span class="line">  .wrap &#123;</span><br><span class="line">    width: 100px;</span><br><span class="line">    height: 100px;</span><br><span class="line">    display: flex;</span><br><span class="line">    justify-content: center;</span><br><span class="line">    align-items: center;</span><br><span class="line">    overflow: hidden;</span><br><span class="line"></span><br><span class="line">    img &#123;</span><br><span class="line">      width: 100%;</span><br><span class="line">      transform: scale(2.5);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;style&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="添加MyLoading-ts"><a href="#添加MyLoading-ts" class="headerlink" title="添加MyLoading.ts"></a>添加MyLoading.ts</h4><figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">type</span> &#123;App, VNode,&#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span></span><br><span class="line"><span class="keyword">import</span> &#123;createVNode, render, cloneVNode&#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span></span><br><span class="line"><span class="keyword">import</span> MyLoading <span class="keyword">from</span> <span class="string">&quot;@/components/MyLoading.vue&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">    <span class="function"><span class="title">install</span>(<span class="params">app: App</span>)</span> &#123;</span><br><span class="line">        <span class="comment">// 使用vue底层的createVNode方法将组件渲染为虚拟节点</span></span><br><span class="line">        <span class="keyword">const</span> VNode: VNode = createVNode(MyLoading)</span><br><span class="line">        <span class="comment">// 使用render函数将组件挂载到body中</span></span><br><span class="line">        render(VNode, <span class="built_in">document</span>.body)</span><br><span class="line">        <span class="comment">// 定义全局方法设置组件的显示和隐藏</span></span><br><span class="line">        app.config.globalProperties.$showLoading = VNode.component?.exposed.showLoading</span><br><span class="line">        app.config.globalProperties.$hideLoading = VNode.component?.exposed.hideLoading</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> weakMap = <span class="keyword">new</span> <span class="built_in">WeakMap</span>()</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 自定义Loading指令</span></span><br><span class="line">        app.directive(<span class="string">&quot;zx-loading&quot;</span>, &#123;</span><br><span class="line">            <span class="function"><span class="title">mounted</span>(<span class="params">el</span>)</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (weakMap.get(el)) <span class="keyword">return</span></span><br><span class="line">                <span class="comment">//  记录当前绑定元素的position</span></span><br><span class="line">                weakMap.set(el, <span class="built_in">window</span>.getComputedStyle(el).position)</span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="function"><span class="title">updated</span>(<span class="params">el: HTMLElement, binding: &#123; value: <span class="built_in">Boolean</span> &#125;</span>)</span> &#123;</span><br><span class="line">                <span class="keyword">const</span> oldPosition = weakMap.get(el);</span><br><span class="line">                <span class="comment">// 如果不是position: relative或者absolute，就设置为relative</span></span><br><span class="line">                <span class="comment">// 这里的目的是确保loading组件正确覆盖当前绑定的元素</span></span><br><span class="line">                <span class="keyword">if</span> (oldPosition !== <span class="string">&#x27;absolute&#x27;</span> &amp;&amp; oldPosition !== <span class="string">&#x27;relative&#x27;</span>) &#123;</span><br><span class="line">                    el.style.position = <span class="string">&#x27;relative&#x27;</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 克隆一份loading元素,</span></span><br><span class="line">                <span class="comment">// 作用是当页面上有多个zx-loading时，每个dom都维护一份属于自己的loading，不会冲突</span></span><br><span class="line">                <span class="keyword">const</span> newVNode = cloneVNode(VNode)</span><br><span class="line">                <span class="comment">// 挂载当前节点</span></span><br><span class="line">                render(newVNode, el)</span><br><span class="line">                <span class="comment">// 判断绑定的值</span></span><br><span class="line">                <span class="keyword">if</span> (binding.value) &#123;</span><br><span class="line">                    newVNode.component?.exposed.showLoading()</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    newVNode.component?.exposed.hideLoading(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">                        <span class="comment">// 还原布局方式</span></span><br><span class="line">                        el.style.position = oldPosition</span><br><span class="line">                    &#125;)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的文件中定义了两个全局函数和一个自定义指令</p>
+<ul>
+<li>$showLoading：全局显示一个Loading</li>
+<li>$hideLoading：关闭全局的Loading</li>
+<li>zx-loading：自定义指令</li>
+</ul>
+<h4 id="在main-ts中挂载"><a href="#在main-ts中挂载" class="headerlink" title="在main.ts中挂载"></a>在main.ts中挂载</h4><p>在 <code>main.ts</code> 中去挂载我们自定义的 Loading</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;createApp&#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> MyLoading <span class="keyword">from</span> <span class="string">&quot;@/utils/MyLoading&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = createApp(App)</span><br><span class="line"><span class="comment">// 引入自定义的全局Loading</span></span><br><span class="line">app.use(MyLoading)</span><br><span class="line"></span><br><span class="line">app.mount(<span class="string">&#x27;#app&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用方法一：函数式使用"><a href="#使用方法一：函数式使用" class="headerlink" title="使用方法一：函数式使用"></a>使用方法一：函数式使用</h4><p>调用全局方法弹出Loading</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;!--自定义全局loading--&gt;</span><br><span class="line">  &lt;el-button type&#x3D;&quot;primary&quot; @click&#x3D;&quot;showMyLoading&quot;&gt;显示自定义的全局loading&lt;&#x2F;el-button&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang&#x3D;&quot;ts&quot;&gt;</span><br><span class="line">import &#123;getCurrentInstance&#125; from &#39;vue&#39;</span><br><span class="line">&#x2F;&#x2F; 获取当前实例</span><br><span class="line">const &#123;proxy&#125; &#x3D; getCurrentInstance()</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 全局显示自定义loading</span><br><span class="line">const showMyLoading &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  proxy.$showLoading()</span><br><span class="line">  setTimeout(() &#x3D;&gt; &#123;</span><br><span class="line">    proxy.$hideLoading()</span><br><span class="line">  &#125;, 2000)</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src= "/img/loading.gif" data-lazy-src="https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/picgo/image-20230925171920861.png" alt="image-20230925171920861"></p>
+<h4 id="使用方法二：指令式使用"><a href="#使用方法二：指令式使用" class="headerlink" title="使用方法二：指令式使用"></a>使用方法二：指令式使用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">    &lt;!--自定义的loading指令使用--&gt;</span><br><span class="line">    &lt;div class&#x3D;&quot;box&quot; v-zx-loading&#x3D;&quot;isLoading&quot;&gt;</span><br><span class="line">      指令的方式使用</span><br><span class="line">    &lt;&#x2F;div&gt;</span><br><span class="line">    &lt;el-button type&#x3D;&quot;primary&quot; @click&#x3D;&quot;showDivLoading&quot;&gt;显示loading&lt;&#x2F;el-button&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--自定义的loading指令使用--&gt;</span><br><span class="line">    &lt;div class&#x3D;&quot;parent&quot;&gt;</span><br><span class="line">      &lt;div class&#x3D;&quot;child&quot; v-zx-loading&#x3D;&quot;childLoading&quot;&gt;</span><br><span class="line">      &lt;&#x2F;div&gt;</span><br><span class="line">    &lt;&#x2F;div&gt;</span><br><span class="line">    &lt;el-button type&#x3D;&quot;primary&quot; @click&#x3D;&quot;showChildLoading&quot;&gt;显示childLoading&lt;&#x2F;el-button&gt;</span><br><span class="line">  &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang&#x3D;&quot;ts&quot;&gt;</span><br><span class="line">&#x2F;&#x2F; 显示局部loading</span><br><span class="line">let isLoading &#x3D; ref(false)</span><br><span class="line">const showDivLoading &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  isLoading.value &#x3D; !isLoading.value</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const childLoading &#x3D; ref(false)</span><br><span class="line">const showChildLoading &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  childLoading.value &#x3D; !childLoading.value</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style scoped lang&#x3D;&quot;scss&quot;&gt;</span><br><span class="line">.box &#123;</span><br><span class="line">  width: 200px;</span><br><span class="line">  height: 200px;</span><br><span class="line">  border: 1px solid;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.parent &#123;</span><br><span class="line">  position: relative;</span><br><span class="line">  width: 300px;</span><br><span class="line">  height: 300px;</span><br><span class="line">  border: 1px solid;</span><br><span class="line">  padding: 30px;</span><br><span class="line"></span><br><span class="line">  .child &#123;</span><br><span class="line">    position: absolute;</span><br><span class="line">    right: 30px;</span><br><span class="line">    bottom: 30px;</span><br><span class="line">    width: 200px;</span><br><span class="line">    height: 200px;</span><br><span class="line">    border: 1px solid;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;style&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src= "/img/loading.gif" data-lazy-src="https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/picgo/image-20230925172100385.png" alt="image-20230925172100385"></p>
+<h3 id="use函数源码实现"><a href="#use函数源码实现" class="headerlink" title="use函数源码实现"></a>use函数源码实现</h3><p>添加 <code>MyUse.ts</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">type</span> &#123;App&#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span></span><br><span class="line"><span class="keyword">import</span> &#123;app&#125; <span class="keyword">from</span> <span class="string">&quot;@/main&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个接口，声明install方法必传</span></span><br><span class="line"><span class="keyword">interface</span> Use &#123;</span><br><span class="line">    install: <span class="function">(<span class="params">app: App, ...options: <span class="built_in">any</span>[]</span>) =&gt;</span> <span class="built_in">void</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> installList = <span class="keyword">new</span> <span class="built_in">Set</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">myUse</span>&lt;<span class="title">T</span> <span class="title">extends</span> <span class="title">Use</span>&gt;(<span class="params">plugin: T, ...options: <span class="built_in">any</span>[]</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 判断这个插件是否已经注册过了，如果注册过了则报错</span></span><br><span class="line">    <span class="keyword">if</span> (installList.has(plugin)) &#123;</span><br><span class="line">        <span class="built_in">console</span>.error(<span class="string">&quot;Plugin already installed&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 调用插件身上的install方法，并传入main.ts导出的app</span></span><br><span class="line">    plugin.install(app, ...options)</span><br><span class="line">    installList.add(plugin)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用自定义的myUse方法注册我们自定义的Loading</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;createApp&#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义全局Loading</span></span><br><span class="line"><span class="keyword">import</span> MyLoading <span class="keyword">from</span> <span class="string">&quot;@/utils/MyLoading&quot;</span>;</span><br><span class="line"><span class="comment">// 自定义app.use方法</span></span><br><span class="line"><span class="keyword">import</span> myUse <span class="keyword">from</span> <span class="string">&quot;@/utils/MyUse&quot;</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> app = createApp(App)</span><br><span class="line"><span class="comment">// 引入自定义的全局Loading</span></span><br><span class="line">myUse(MyLoading)</span><br><span class="line"></span><br><span class="line">app.mount(<span class="string">&#x27;#app&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">SZX</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://songzx0106.github.io/Vue/202309251756/">https://songzx0106.github.io/Vue/202309251756/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://SongZX0106.github.io" target="_blank">SZX的开发笔记</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Vue/">Vue</a></div><div class="post_share"><div class="social-share" data-image="/images/ys16.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/js/share.min.css" media="print" onload="this.media='all'"><script src="https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechat.png" target="_blank"><img class="post-qr-code-img" data-lazy-src="/images/wechat.png" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" data-lazy-src="/images/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/Echarts/231020/"><img class="prev-cover" data-lazy-src="/images/ys07.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Vue3 + Echarts(5.x) 实现中国地图</div></div></a></div><div class="next-post pull-right"><a href="/Vue/20230925/"><img class="next-cover" data-lazy-src="/images/ys09.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">封装v-resize并发布到NPM</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/Vue/20221209160521/" title="ElementUI实现跨页多选表格"><img class="cover" data-lazy-src="/images/ys13.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-12-09</div><div class="title">ElementUI实现跨页多选表格</div></div></a></div><div><a href="/Vue/20230823/" title="Vue自定义好用的指令"><img class="cover" data-lazy-src="/images/ys04.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-23</div><div class="title">Vue自定义好用的指令</div></div></a></div><div><a href="/Vue/20230608/" title="实现网站自动监听更新"><img class="cover" data-lazy-src="/images/ys02.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-08</div><div class="title">实现网站自动监听更新</div></div></a></div><div><a href="/Vue/20230915/" title="实现瀑布流布局"><img class="cover" data-lazy-src="/images/ys07.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-15</div><div class="title">实现瀑布流布局</div></div></a></div><div><a href="/Vue/20230925/" title="封装v-resize并发布到NPM"><img class="cover" data-lazy-src="/images/ys09.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-25</div><div class="title">封装v-resize并发布到NPM</div></div></a></div><div><a href="/Vue/20231030/" title="点击产生水波纹效果,vue自定义指令20行代码搞定～"><img class="cover" data-lazy-src="/images/ys06.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-30</div><div class="title">点击产生水波纹效果,vue自定义指令20行代码搞定～</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" data-lazy-src="/images/favicon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">SZX</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">139</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">24</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">34</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://gitee.com/szxio"><i class="iconfont icon-gitee-fill-round"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">welcome to my blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6%E4%B9%8B%E5%85%A8%E5%B1%80Loading"><span class="toc-number">1.</span> <span class="toc-text">自定义插件之全局Loading</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ElementPlus%E7%9A%84%E9%BB%98%E8%AE%A4%E5%85%A8%E5%B1%80Loading"><span class="toc-number">1.1.</span> <span class="toc-text">ElementPlus的默认全局Loading</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E7%9A%84%E6%96%B9%E5%BC%8F%E4%BD%BF%E7%94%A8"><span class="toc-number">1.1.1.</span> <span class="toc-text">指令的方式使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%BC%8F%E8%B0%83%E7%94%A8"><span class="toc-number">1.1.2.</span> <span class="toc-text">函数式调用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%85%A8%E5%B1%80Loading"><span class="toc-number">1.2.</span> <span class="toc-text">自定义全局Loading</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0MyLoading-vue"><span class="toc-number">1.2.1.</span> <span class="toc-text">添加MyLoading.vue</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0MyLoading-ts"><span class="toc-number">1.2.2.</span> <span class="toc-text">添加MyLoading.ts</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8main-ts%E4%B8%AD%E6%8C%82%E8%BD%BD"><span class="toc-number">1.2.3.</span> <span class="toc-text">在main.ts中挂载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E5%87%BD%E6%95%B0%E5%BC%8F%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.4.</span> <span class="toc-text">使用方法一：函数式使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E6%8C%87%E4%BB%A4%E5%BC%8F%E4%BD%BF%E7%94%A8"><span class="toc-number">1.2.5.</span> <span class="toc-text">使用方法二：指令式使用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#use%E5%87%BD%E6%95%B0%E6%BA%90%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.3.</span> <span class="toc-text">use函数源码实现</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/JavaScript/%E5%B7%A7%E7%94%A8CSS%E7%9A%84clamp%E5%87%BD%E6%95%B0/" title="巧用CSS的clamp函数"><img data-lazy-src="/images/ys13.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="巧用CSS的clamp函数"/></a><div class="content"><a class="title" href="/JavaScript/%E5%B7%A7%E7%94%A8CSS%E7%9A%84clamp%E5%87%BD%E6%95%B0/" title="巧用CSS的clamp函数">巧用CSS的clamp函数</a><time datetime="2024-03-14T02:04:37.000Z" title="发表于 2024-03-14 10:04:37">2024-03-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/Vue/%E6%89%8B%E5%86%99vue3%E6%BA%90%E7%A0%81/" title="手写Vue3核心源码"><img data-lazy-src="/images/ys03.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="手写Vue3核心源码"/></a><div class="content"><a class="title" href="/Vue/%E6%89%8B%E5%86%99vue3%E6%BA%90%E7%A0%81/" title="手写Vue3核心源码">手写Vue3核心源码</a><time datetime="2024-03-09T02:40:34.000Z" title="发表于 2024-03-09 10:40:34">2024-03-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JavaScript/%E4%BB%BFChatGPT%E5%85%89%E6%A0%87%E8%B7%9F%E9%9A%8F%E6%95%88%E6%9E%9C/" title="仿ChatGPT光标跟随效果"><img data-lazy-src="/images/ys02.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="仿ChatGPT光标跟随效果"/></a><div class="content"><a class="title" href="/JavaScript/%E4%BB%BFChatGPT%E5%85%89%E6%A0%87%E8%B7%9F%E9%9A%8F%E6%95%88%E6%9E%9C/" title="仿ChatGPT光标跟随效果">仿ChatGPT光标跟随效果</a><time datetime="2024-01-19T14:57:50.000Z" title="发表于 2024-01-19 22:57:50">2024-01-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/Vue/20231224/" title="手写Vue2源码"><img data-lazy-src="/images/ys20.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="手写Vue2源码"/></a><div class="content"><a class="title" href="/Vue/20231224/" title="手写Vue2源码">手写Vue2源码</a><time datetime="2023-12-24T08:28:09.000Z" title="发表于 2023-12-24 16:28:09">2023-12-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/NodeJs/231105/" title="网络请求"><img data-lazy-src="/images/ys02.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="网络请求"/></a><div class="content"><a class="title" href="/NodeJs/231105/" title="网络请求">网络请求</a><time datetime="2023-11-05T14:58:03.000Z" title="发表于 2023-11-05 22:58:03">2023-11-05</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('/images/ys16.png')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By SZX</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">少年辛苦终身事，莫向光阴惰寸功。<a target="_blank" rel="noopener" href="https://gitee.com/szxio">My Gitee</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/js/instantpage.min.js" type="module"></script><script src="https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/js/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/js/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    const valine = new Valine(Object.assign({
+      el: '#vcomment',
+      appId: 'iJzt0X9OdhFCcdn4N0dJ86fY-gzGzoHsz',
+      appKey: '8vtaRafgQSvU5ntYgszJfRW5',
+      placeholder: '留下你的精彩评论',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'zh-CN',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+      requiredFields: ["nick,mail"],
+      visitor: false
+    }, null))
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/js/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !true) {
+  if (true) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/js/canvas-fluttering-ribbon.min.js"></script><script src="https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/js/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://szx-bucket1.oss-cn-hangzhou.aliyuncs.com/js/click-show-text.min.js" data-mobile="true" data-text="富强,民主,文明,和谐,自由,平等,公正,法制,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="false" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
